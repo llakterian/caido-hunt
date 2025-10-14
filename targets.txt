@@ -1,0 +1,14 @@
+www.wickr.com
+admin.wickr.com
+support.wickr.com
+Wickr Pro/Wickr Me (all related technical components)
+Wickr Pro Windows
+Wickr Pro OS X
+Wickr Pro Linux
+Wickr Pro iOS
+Wickr Pro Android
+Wickr Me Windows
+Wickr Me OS X
+Wickr Me Linux
+Wickr Me iOS
+Wickr Me Android
