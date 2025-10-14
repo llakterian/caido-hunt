@@ -190,3 +190,54 @@ vulnerable_test_server.py
 # Configuration overrides
 config_local.json
 settings_local.py
+
+# Python cache and compiled files
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+
+# Virtual environments
+caido-env/
+venv-*/
+.venv-*/
+
+# Scanner specific outputs
+ultimate_scan_report_*.json
+ultimate_scan_report_*.csv
+*_scan_report_*.json
+*_scan_report_*.csv
+scan_*.json
+scan_*.csv
+
+# Sensitive data
+targets.txt
+sensitive_endpoints.txt
+wordlists/custom_*
+scripts/sensitive_*
+
+# Development files
+TODO.md
+NOTES.md
+dev_notes.txt
+scratch.py
+test_target.py
+
+# Docker
+.dockerignore
+Dockerfile.dev
+docker-compose.dev.yml
+
+# Coverage reports
+.coverage*
+coverage/
+htmlcov/
+
+# Performance profiling
+*.prof
+*.pstats
+
+# System files
+*.pid
+*.lock
+.nfs*
