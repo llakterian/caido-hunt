@@ -1,0 +1,62 @@
+{
+  "scan_id": "SCAN_424460",
+  "target": "http://testhtml5.vulnweb.com",
+  "timestamp": "2025-10-15T01:43:23.815853",
+  "duration_seconds": 10.49,
+  "scanner_version": "3.0",
+  "endpoints_discovered": 8,
+  "forms_discovered": 1,
+  "parameters_tested": 2,
+  "total_vulnerabilities": 1,
+  "vulnerabilities_by_severity": {
+    "Critical": 0,
+    "High": 0,
+    "Medium": 1,
+    "Low": 0
+  },
+  "vulnerabilities": [
+    {
+      "id": "70fc6e8a-c5be-4e8b-adce-53f8f919ab0a",
+      "type": "csrf",
+      "url": "http://testhtml5.vulnweb.com/login",
+      "parameter": "form",
+      "payload": "N/A",
+      "evidence": "POST form without CSRF token",
+      "severity": "Medium",
+      "cvss_score": 6.5,
+      "description": "Cross-Site Request Forgery",
+      "impact": "CSRF allows attackers to perform unauthorized actions",
+      "recommendation": "Implement CSRF tokens and SameSite cookie attributes",
+      "poc": "Form at http://testhtml5.vulnweb.com/login vulnerable to CSRF",
+      "timestamp": "2025-10-15T01:43:30.627723"
+    }
+  ],
+  "endpoints": [
+    "http://testhtml5.vulnweb.com#/contact",
+    "http://testhtml5.vulnweb.com#/carousel",
+    "http://testhtml5.vulnweb.com#/popular",
+    "http://testhtml5.vulnweb.com#myModal",
+    "http://testhtml5.vulnweb.com#/latest",
+    "http://testhtml5.vulnweb.com",
+    "http://testhtml5.vulnweb.com#/about",
+    "http://testhtml5.vulnweb.com#/archive"
+  ],
+  "forms": [
+    {
+      "action": "http://testhtml5.vulnweb.com/login",
+      "method": "POST",
+      "inputs": [
+        {
+          "name": "username",
+          "type": "text",
+          "value": "admin"
+        },
+        {
+          "name": "password",
+          "type": "password",
+          "value": ""
+        }
+      ]
+    }
+  ]
+}

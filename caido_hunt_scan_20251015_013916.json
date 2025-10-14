@@ -1,0 +1,31 @@
+{
+  "scan_id": "SCAN_215177",
+  "target": "http://auth.ripio.com",
+  "timestamp": "2025-10-15T01:37:11.784492",
+  "duration_seconds": 124.58,
+  "scanner_version": "3.0",
+  "endpoints_discovered": 10,
+  "forms_discovered": 0,
+  "parameters_tested": 30,
+  "total_vulnerabilities": 0,
+  "vulnerabilities_by_severity": {
+    "Critical": 0,
+    "High": 0,
+    "Medium": 0,
+    "Low": 0
+  },
+  "vulnerabilities": [],
+  "endpoints": [
+    "http://auth.ripio.com/login",
+    "http://auth.ripio.com/graphql",
+    "http://auth.ripio.com/",
+    "http://auth.ripio.com/api-docs",
+    "http://auth.ripio.com/health",
+    "http://auth.ripio.com/actuator",
+    "http://auth.ripio.com/debug",
+    "http://auth.ripio.com/admin",
+    "http://auth.ripio.com/swagger",
+    "http://auth.ripio.com/api"
+  ],
+  "forms": []
+}

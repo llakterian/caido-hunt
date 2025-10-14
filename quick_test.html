@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick Test</title>
+</head>
+<body>
+    <h1>Quick API Test</h1>
+    <button id="testBtn">Test API</button>
+    <pre id="output"></pre>
+
+    <script>
+        document.getElementById('testBtn').addEventListener('click', async function() {
+            const output = document.getElementById('output');
+            output.textContent = 'Testing...';
+            
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/scan', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        target: 'http://example.com',
+                        threads: 5,
+                        delay: 1.0,
+                        timeout: 30
+                    })
+                });
+                
+                const data = await response.json();
+                output.textContent = `Status: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                output.textContent = `Error: ${error}`;
+            }
+        });
+    </script>
+</body>
+</html>

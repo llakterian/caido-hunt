@@ -1,0 +1,289 @@
+name: Security Scan with Caido Hunt v3.0
+
+on:
+  push:
+    branches: [ main, develop, staging ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: 'Target URL to scan'
+        required: true
+        default: 'https://staging.example.com'
+      scan_modules:
+        description: 'Modules to run (comma-separated or "all")'
+        required: false
+        default: 'all'
+      fail_on_severity:
+        description: 'Fail on severity (critical, high, medium, low)'
+        required: false
+        default: 'critical,high'
+
+env:
+  PYTHON_VERSION: '3.10'
+  SCAN_TIMEOUT: 600
+  RESULTS_DIR: './reports'
+
+jobs:
+  security-scan:
+    name: Run Security Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-v3.txt
+
+      - name: Create reports directory
+        run: mkdir -p ${{ env.RESULTS_DIR }}
+
+      - name: Run Caido Hunt Scanner
+        id: scan
+        continue-on-error: true
+        env:
+          TARGET_URL: ${{ github.event.inputs.target_url || secrets.STAGING_URL || 'https://staging.example.com' }}
+          SCAN_MODULES: ${{ github.event.inputs.scan_modules || 'all' }}
+          FAIL_ON: ${{ github.event.inputs.fail_on_severity || 'critical,high' }}
+        run: |
+          echo "🚀 Starting Caido Hunt v3.0 Security Scan"
+          echo "Target: $TARGET_URL"
+          echo "Modules: $SCAN_MODULES"
+
+          if [ "$SCAN_MODULES" == "all" ]; then
+            MODULE_FLAG="--all-modules"
+          else
+            MODULE_FLAG="--modules $SCAN_MODULES"
+          fi
+
+          python ultimate_scanner_v3.py "$TARGET_URL" \
+            $MODULE_FLAG \
+            --ci-mode \
+            --enable-ml \
+            --generate-poc \
+            --output-format sarif \
+            --output ${{ env.RESULTS_DIR }}/scan-results.sarif \
+            --output-directory ${{ env.RESULTS_DIR }} \
+            --fail-on $FAIL_ON \
+            --timeout ${{ env.SCAN_TIMEOUT }} \
+            --threads 10 \
+            --verbose \
+            2>&1 | tee ${{ env.RESULTS_DIR }}/scan.log
+
+      - name: Generate JSON Report
+        if: always()
+        continue-on-error: true
+        env:
+          TARGET_URL: ${{ github.event.inputs.target_url || secrets.STAGING_URL || 'https://staging.example.com' }}
+        run: |
+          python ultimate_scanner_v3.py "$TARGET_URL" \
+            --all-modules \
+            --ci-mode \
+            --output-format json \
+            --output ${{ env.RESULTS_DIR }}/scan-results.json \
+            --quiet || true
+
+      - name: Generate HTML Report
+        if: always()
+        continue-on-error: true
+        env:
+          TARGET_URL: ${{ github.event.inputs.target_url || secrets.STAGING_URL || 'https://staging.example.com' }}
+        run: |
+          python ultimate_scanner_v3.py "$TARGET_URL" \
+            --all-modules \
+            --ci-mode \
+            --output-format html \
+            --output ${{ env.RESULTS_DIR }}/scan-report.html \
+            --report-title "Security Scan Report - $(date +%Y-%m-%d)" \
+            --include-evidence \
+            --quiet || true
+
+      - name: Upload SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: ${{ env.RESULTS_DIR }}/scan-results.sarif
+          category: caido-hunt-security-scan
+
+      - name: Parse scan results
+        id: parse-results
+        if: always()
+        run: |
+          if [ -f "${{ env.RESULTS_DIR }}/scan-results.json" ]; then
+            CRITICAL=$(jq -r '[.vulnerabilities[] | select(.severity=="Critical")] | length' ${{ env.RESULTS_DIR }}/scan-results.json || echo "0")
+            HIGH=$(jq -r '[.vulnerabilities[] | select(.severity=="High")] | length' ${{ env.RESULTS_DIR }}/scan-results.json || echo "0")
+            MEDIUM=$(jq -r '[.vulnerabilities[] | select(.severity=="Medium")] | length' ${{ env.RESULTS_DIR }}/scan-results.json || echo "0")
+            LOW=$(jq -r '[.vulnerabilities[] | select(.severity=="Low")] | length' ${{ env.RESULTS_DIR }}/scan-results.json || echo "0")
+            TOTAL=$(jq -r '.vulnerabilities | length' ${{ env.RESULTS_DIR }}/scan-results.json || echo "0")
+
+            echo "critical=$CRITICAL" >> $GITHUB_OUTPUT
+            echo "high=$HIGH" >> $GITHUB_OUTPUT
+            echo "medium=$MEDIUM" >> $GITHUB_OUTPUT
+            echo "low=$LOW" >> $GITHUB_OUTPUT
+            echo "total=$TOTAL" >> $GITHUB_OUTPUT
+
+            echo "📊 Scan Results Summary:"
+            echo "  🔴 Critical: $CRITICAL"
+            echo "  🟠 High: $HIGH"
+            echo "  🟡 Medium: $MEDIUM"
+            echo "  🟢 Low: $LOW"
+            echo "  📝 Total: $TOTAL"
+          else
+            echo "⚠️ No JSON results file found"
+            echo "critical=0" >> $GITHUB_OUTPUT
+            echo "high=0" >> $GITHUB_OUTPUT
+            echo "medium=0" >> $GITHUB_OUTPUT
+            echo "low=0" >> $GITHUB_OUTPUT
+            echo "total=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create scan summary
+        if: always()
+        run: |
+          echo "## 🔒 Security Scan Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Scan Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "**Target:** ${{ github.event.inputs.target_url || secrets.STAGING_URL || 'staging.example.com' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Vulnerability Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Severity | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔴 Critical | ${{ steps.parse-results.outputs.critical }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🟠 High | ${{ steps.parse-results.outputs.high }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🟡 Medium | ${{ steps.parse-results.outputs.medium }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🟢 Low | ${{ steps.parse-results.outputs.low }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **📝 Total** | **${{ steps.parse-results.outputs.total }}** |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.parse-results.outputs.critical }}" -gt "0" ] || [ "${{ steps.parse-results.outputs.high }}" -gt "0" ]; then
+            echo "### ⚠️ Action Required" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Critical or High severity vulnerabilities detected!" >> $GITHUB_STEP_SUMMARY
+            echo "Review the Security tab for details." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ✅ No Critical Issues" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "No critical or high severity vulnerabilities detected." >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📄 Full reports available in workflow artifacts." >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload scan reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: security-scan-reports-${{ github.run_number }}
+          path: |
+            ${{ env.RESULTS_DIR }}/*.sarif
+            ${{ env.RESULTS_DIR }}/*.json
+            ${{ env.RESULTS_DIR }}/*.html
+            ${{ env.RESULTS_DIR }}/*.log
+          retention-days: 90
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const critical = '${{ steps.parse-results.outputs.critical }}';
+            const high = '${{ steps.parse-results.outputs.high }}';
+            const medium = '${{ steps.parse-results.outputs.medium }}';
+            const low = '${{ steps.parse-results.outputs.low }}';
+            const total = '${{ steps.parse-results.outputs.total }}';
+
+            const body = `## 🔒 Security Scan Results
+
+            **Caido Hunt v3.0** has completed scanning this PR.
+
+            | Severity | Count |
+            |----------|-------|
+            | 🔴 Critical | ${critical} |
+            | 🟠 High | ${high} |
+            | 🟡 Medium | ${medium} |
+            | 🟢 Low | ${low} |
+            | **📝 Total** | **${total}** |
+
+            ${parseInt(critical) > 0 || parseInt(high) > 0 ?
+              '### ⚠️ Action Required\n\nCritical or High severity vulnerabilities detected! Please review and fix before merging.' :
+              '### ✅ All Clear\n\nNo critical or high severity vulnerabilities detected.'}
+
+            📊 View detailed results in the [Security tab](https://github.com/${{ github.repository }}/security/code-scanning).
+            📄 Download full reports from [workflow artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      - name: Check scan status
+        if: always()
+        run: |
+          CRITICAL=${{ steps.parse-results.outputs.critical }}
+          HIGH=${{ steps.parse-results.outputs.high }}
+
+          if [ "$CRITICAL" -gt "0" ] || [ "$HIGH" -gt "0" ]; then
+            echo "❌ Security scan failed: $CRITICAL critical and $HIGH high severity issues found"
+            exit 1
+          else
+            echo "✅ Security scan passed: No critical or high severity issues"
+            exit 0
+          fi
+
+  # Optional: Notify on failure
+  notify-on-failure:
+    name: Notify on Scan Failure
+    needs: security-scan
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send notification
+        run: |
+          echo "🚨 Security scan failed! Check the workflow for details."
+          # Add your notification logic here (Slack, email, etc.)
+          # Example: curl -X POST ${{ secrets.SLACK_WEBHOOK }} -d '{"text":"Security scan failed!"}'
+
+  # Optional: Trend analysis job
+  trend-analysis:
+    name: Vulnerability Trend Analysis
+    needs: security-scan
+    if: always() && github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Download previous results
+        uses: actions/download-artifact@v3
+        continue-on-error: true
+        with:
+          name: security-scan-reports-${{ github.run_number }}
+          path: ./current-results
+
+      - name: Analyze trends
+        run: |
+          echo "📈 Analyzing vulnerability trends..."
+          # Add trend analysis logic here
+          echo "This job can track vulnerability trends over time"

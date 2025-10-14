@@ -1,0 +1,121 @@
+# Caido Hunt v3.0 - Advanced Dependencies
+# ==========================================
+# Install: pip install -r requirements-v3.txt
+
+# Base requirements (from requirements.txt)
+requests>=2.28.0,<3.0.0
+beautifulsoup4>=4.11.0
+urllib3>=1.26.0
+lxml>=4.9.0
+
+# Machine Learning & Anomaly Detection
+scikit-learn>=1.2.0,<2.0.0
+numpy>=1.23.0,<2.0.0
+scipy>=1.10.0
+
+# GraphQL Testing
+gql>=3.4.0
+graphql-core>=3.2.0
+requests-toolbelt>=0.10.0
+
+# WebSocket Support
+websocket-client>=1.5.0
+python-socketio>=5.8.0
+
+# Data Visualization
+matplotlib>=3.6.0
+plotly>=5.13.0
+seaborn>=0.12.0
+
+# CI/CD Integration & Reporting Formats
+sarif-om>=1.0.4
+junit-xml>=1.9
+xmltodict>=0.13.0
+
+# Enhanced Reporting & Templates
+jinja2>=3.1.2
+markdown>=3.4.0
+pdfkit>=1.0.0
+weasyprint>=58.0
+
+# Performance & Optimization
+aiohttp>=3.8.0
+asyncio>=3.4.3
+multiprocess>=0.70.14
+
+# Security & Cryptography
+cryptography>=40.0.0
+pyjwt>=2.6.0
+
+# Data Processing & Analysis
+pandas>=1.5.0
+tabulate>=0.9.0
+
+# Utilities
+python-dotenv>=1.0.0
+pyyaml>=6.0
+colorama>=0.4.6
+tqdm>=4.65.0
+rich>=13.3.0
+
+# Testing & Debugging (optional)
+pytest>=7.3.0
+pytest-cov>=4.0.0
+black>=23.3.0
+pylint>=2.17.0
+
+# Database Support (for storing scan results)
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.0
+
+# Advanced HTTP Features
+httpx>=0.24.0
+h2>=4.1.0
+
+# XML Processing (for XXE testing)
+defusedxml>=0.7.1
+xmlschema>=2.3.0
+
+# Regular Expression Enhancement
+regex>=2023.5.5
+
+# JSON Processing
+jsonschema>=4.17.0
+orjson>=3.8.0
+
+# Date/Time Utilities
+python-dateutil>=2.8.0
+pytz>=2023.3
+
+# Logging Enhancement
+loguru>=0.7.0
+
+# Network Utilities
+dnspython>=2.3.0
+netaddr>=0.8.0
+ipaddress>=1.0.23
+
+# HTML/CSS Parsing
+cssselect>=1.2.0
+html5lib>=1.1
+
+# User Agent Randomization
+fake-useragent>=1.1.0
+
+# Rate Limiting
+ratelimit>=2.2.1
+
+# Progress Bars & CLI
+click>=8.1.0
+inquirer>=3.1.0
+
+# Screenshot Capabilities (optional)
+selenium>=4.9.0
+pillow>=9.5.0
+
+# API Documentation Generation
+pydantic>=1.10.0
+fastapi>=0.95.0
+
+# Monitoring & Metrics
+prometheus-client>=0.16.0

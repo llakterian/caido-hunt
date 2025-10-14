@@ -1,0 +1,156 @@
+{
+  "scan_id": "SCAN_140851",
+  "target": "http://testphp.vulnweb.com",
+  "timestamp": "2025-10-15T01:42:51.606863",
+  "duration_seconds": 10.45,
+  "scanner_version": "3.0",
+  "endpoints_discovered": 12,
+  "forms_discovered": 1,
+  "parameters_tested": 2,
+  "total_vulnerabilities": 7,
+  "vulnerabilities_by_severity": {
+    "Critical": 4,
+    "High": 2,
+    "Medium": 1,
+    "Low": 0
+  },
+  "vulnerabilities": [
+    {
+      "id": "4764c453-911a-4bb2-b1ae-297f8d9debbf",
+      "type": "xss_reflected",
+      "url": "http://testphp.vulnweb.com/search.php?test=query",
+      "parameter": "searchFor",
+      "payload": "<script>alert('CAIDOHUNT6718')</script>",
+      "evidence": "Payload reflected in response",
+      "severity": "High",
+      "cvss_score": 7.5,
+      "description": "Reflected Cross-Site Scripting",
+      "impact": "XSS allows session hijacking and malicious script execution",
+      "recommendation": "Implement proper output encoding and Content Security Policy",
+      "poc": "curl 'http://testphp.vulnweb.com/search.php?test=query?searchFor=%3Cscript%3Ealert%28%27CAIDOHUNT6718%27%29%3C/script%3E'",
+      "timestamp": "2025-10-15T01:42:52.542545"
+    },
+    {
+      "id": "b8f999c8-e473-47d3-987a-5ed8682d7b70",
+      "type": "sqli_error",
+      "url": "http://testphp.vulnweb.com/search.php?test=query",
+      "parameter": "searchFor",
+      "payload": "'",
+      "evidence": "SQL error detected: sql syntax",
+      "severity": "Critical",
+      "cvss_score": 9.0,
+      "description": "SQL Injection - Error based",
+      "impact": "SQL injection allows database compromise and data theft",
+      "recommendation": "Use parameterized queries and input validation",
+      "poc": "curl 'http://testphp.vulnweb.com/search.php?test=query?searchFor=%27'",
+      "timestamp": "2025-10-15T01:42:52.840060"
+    },
+    {
+      "id": "b91f684b-2830-41f9-8580-83823052d90c",
+      "type": "sqli_error",
+      "url": "http://testphp.vulnweb.com/search.php?test=query",
+      "parameter": "searchFor",
+      "payload": "1' AND SLEEP(5)--",
+      "evidence": "SQL error detected: sql syntax",
+      "severity": "Critical",
+      "cvss_score": 9.0,
+      "description": "SQL Injection - Error based",
+      "impact": "SQL injection allows database compromise and data theft",
+      "recommendation": "Use parameterized queries and input validation",
+      "poc": "curl 'http://testphp.vulnweb.com/search.php?test=query?searchFor=1%27%20AND%20SLEEP%285%29--'",
+      "timestamp": "2025-10-15T01:42:53.760440"
+    },
+    {
+      "id": "c93dbcad-7562-4e2f-9f84-3763e7304023",
+      "type": "xss_reflected",
+      "url": "http://testphp.vulnweb.com/search.php?test=query",
+      "parameter": "goButton",
+      "payload": "<script>alert('CAIDOHUNT6718')</script>",
+      "evidence": "Payload reflected in response",
+      "severity": "High",
+      "cvss_score": 7.5,
+      "description": "Reflected Cross-Site Scripting",
+      "impact": "XSS allows session hijacking and malicious script execution",
+      "recommendation": "Implement proper output encoding and Content Security Policy",
+      "poc": "curl 'http://testphp.vulnweb.com/search.php?test=query?goButton=%3Cscript%3Ealert%28%27CAIDOHUNT6718%27%29%3C/script%3E'",
+      "timestamp": "2025-10-15T01:42:54.272009"
+    },
+    {
+      "id": "862bfbdb-4722-493e-8013-d6a863d14488",
+      "type": "sqli_error",
+      "url": "http://testphp.vulnweb.com/search.php?test=query",
+      "parameter": "goButton",
+      "payload": "'",
+      "evidence": "SQL error detected: sql syntax",
+      "severity": "Critical",
+      "cvss_score": 9.0,
+      "description": "SQL Injection - Error based",
+      "impact": "SQL injection allows database compromise and data theft",
+      "recommendation": "Use parameterized queries and input validation",
+      "poc": "curl 'http://testphp.vulnweb.com/search.php?test=query?goButton=%27'",
+      "timestamp": "2025-10-15T01:42:54.683378"
+    },
+    {
+      "id": "7059b9d3-6ada-492d-aea8-825d1f83a08d",
+      "type": "sqli_error",
+      "url": "http://testphp.vulnweb.com/search.php?test=query",
+      "parameter": "goButton",
+      "payload": "1' AND SLEEP(5)--",
+      "evidence": "SQL error detected: sql syntax",
+      "severity": "Critical",
+      "cvss_score": 9.0,
+      "description": "SQL Injection - Error based",
+      "impact": "SQL injection allows database compromise and data theft",
+      "recommendation": "Use parameterized queries and input validation",
+      "poc": "curl 'http://testphp.vulnweb.com/search.php?test=query?goButton=1%27%20AND%20SLEEP%285%29--'",
+      "timestamp": "2025-10-15T01:42:55.594562"
+    },
+    {
+      "id": "ff131393-d52f-46b9-a926-149aaf8a3a08",
+      "type": "csrf",
+      "url": "http://testphp.vulnweb.com/search.php?test=query",
+      "parameter": "form",
+      "payload": "N/A",
+      "evidence": "POST form without CSRF token",
+      "severity": "Medium",
+      "cvss_score": 6.5,
+      "description": "Cross-Site Request Forgery",
+      "impact": "CSRF allows attackers to perform unauthorized actions",
+      "recommendation": "Implement CSRF tokens and SameSite cookie attributes",
+      "poc": "Form at http://testphp.vulnweb.com/search.php?test=query vulnerable to CSRF",
+      "timestamp": "2025-10-15T01:42:55.695473"
+    }
+  ],
+  "endpoints": [
+    "http://testphp.vulnweb.com/categories.php",
+    "http://testphp.vulnweb.com/index.php",
+    "http://testphp.vulnweb.com/hpp/",
+    "http://testphp.vulnweb.com/artists.php",
+    "http://testphp.vulnweb.com/cart.php",
+    "http://testphp.vulnweb.com/Mod_Rewrite_Shop/",
+    "http://testphp.vulnweb.com/privacy.php",
+    "http://testphp.vulnweb.com/userinfo.php",
+    "http://testphp.vulnweb.com/AJAX/index.php",
+    "http://testphp.vulnweb.com/guestbook.php",
+    "http://testphp.vulnweb.com/disclaimer.php",
+    "http://testphp.vulnweb.com/login.php"
+  ],
+  "forms": [
+    {
+      "action": "http://testphp.vulnweb.com/search.php?test=query",
+      "method": "POST",
+      "inputs": [
+        {
+          "name": "searchFor",
+          "type": "text",
+          "value": ""
+        },
+        {
+          "name": "goButton",
+          "type": "submit",
+          "value": "go"
+        }
+      ]
+    }
+  ]
+}

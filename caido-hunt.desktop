@@ -1,0 +1,26 @@
+[Desktop Entry]
+Version=2.0
+Type=Application
+Name=Caido Hunt Scanner
+GenericName=Bug Bounty Scanner
+Comment=Advanced vulnerability scanner for bug bounty hunting - Built by Llakterian
+Exec=gnome-terminal -- bash -c "cd /home/c0bw3b/Desktop/caido-hunt && ./launch_caido_hunt.sh; exec bash"
+Icon=security-high
+Terminal=false
+Categories=Development;Security;Network;
+Keywords=security;scanner;vulnerability;bugbounty;pentesting;
+StartupNotify=true
+Path=/home/c0bw3b/Desktop/caido-hunt
+Actions=CLI;SimpleGUI;AdvancedGUI;
+
+[Desktop Action CLI]
+Name=Launch CLI Scanner
+Exec=gnome-terminal -- bash -c "cd /home/c0bw3b/Desktop/caido-hunt && source caido-env/bin/activate && python ultimate_scanner_challenge.py --help && echo '' && echo 'Ready to scan! Usage: python ultimate_scanner_challenge.py <target>' && exec bash"
+
+[Desktop Action SimpleGUI]
+Name=Launch Simple GUI
+Exec=gnome-terminal -- bash -c "cd /home/c0bw3b/Desktop/caido-hunt && ./launch_caido_hunt.sh; exec bash"
+
+[Desktop Action AdvancedGUI]
+Name=Launch Advanced GUI
+Exec=gnome-terminal -- bash -c "cd /home/c0bw3b/Desktop/caido-hunt && source caido-env/bin/activate && python unified_gui.py; exec bash"

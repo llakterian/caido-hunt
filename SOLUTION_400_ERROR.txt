@@ -1,0 +1,94 @@
+╔════════════════════════════════════════════════════════════════════════╗
+║                                                                        ║
+║                  ✅ 400 ERROR SOLVED! ✅                              ║
+║                                                                        ║
+╚════════════════════════════════════════════════════════════════════════╝
+
+PROBLEM IDENTIFIED:
+   Port 5000 was already in use by another process!
+
+SOLUTION APPLIED:
+   ✅ Killed the old process
+   ✅ Port 5000 is now available
+   ✅ Ready to launch GUI
+
+┌────────────────────────────────────────────────────────────────────────┐
+│  🚀 HOW TO START THE GUI NOW                                           │
+└────────────────────────────────────────────────────────────────────────┘
+
+METHOD 1: Desktop Icon (Recommended)
+   • Double-click "Caido Hunt Scanner" on desktop
+   • GUI will start on port 5000
+
+METHOD 2: Terminal
+   cd ~/Desktop/caido-hunt
+   ./start.sh
+
+METHOD 3: Different Port (If 5000 Still Busy)
+   python realtime_gui.py --port 5001
+   Then open: http://127.0.0.1:5001
+
+┌────────────────────────────────────────────────────────────────────────┐
+│  ⚠️ AVOIDING THIS PROBLEM IN FUTURE                                   │
+└────────────────────────────────────────────────────────────────────────┘
+
+The 400 error happens when:
+   1. Port 5000 is already in use
+   2. Old GUI instance is still running
+   3. Multiple GUIs started at once
+
+TO PREVENT:
+   ✅ Always close previous GUI before starting new one (Ctrl+C)
+   ✅ Check if GUI is running: lsof -i:5000
+   ✅ Use different ports for multiple instances
+   ✅ Close browser tab when done
+
+TO FIX QUICKLY:
+   Run this command to clear port 5000:
+   
+   lsof -ti:5000 | xargs kill -9
+
+   Or use the diagnostic script:
+   ./diagnose.sh
+
+┌────────────────────────────────────────────────────────────────────────┐
+│  🎯 QUICK REFERENCE                                                    │
+└────────────────────────────────────────────────────────────────────────┘
+
+Check if port is in use:
+   lsof -i:5000
+
+Kill process on port:
+   lsof -ti:5000 | xargs kill -9
+
+Start on different port:
+   python realtime_gui.py --port 5001
+
+Check GUI is working:
+   curl http://127.0.0.1:5000
+
+Run diagnostics:
+   ./diagnose.sh
+
+┌────────────────────────────────────────────────────────────────────────┐
+│  ✨ YOUR GUI IS NOW READY!                                             │
+└────────────────────────────────────────────────────────────────────────┘
+
+Try it now:
+   1. Double-click desktop icon OR run ./start.sh
+   2. Browser opens to http://127.0.0.1:5000
+   3. Enter target URL
+   4. Click "Start Scan"
+   5. Watch the magic happen! 🎯
+
+FEATURES YOU'LL SEE:
+   ✅ Live terminal output with color coding
+   ✅ Real-time statistics (elapsed time, pages scanned)
+   ✅ Vulnerability alerts as they're found
+   ✅ Dark theme professional interface
+   ✅ No more guessing what's happening!
+
+╔════════════════════════════════════════════════════════════════════════╗
+║  Built by Llakterian | llakterian@gmail.com                           ║
+║  Repository: https://github.com/llakterian/caido-hunt                 ║
+╚════════════════════════════════════════════════════════════════════════╝

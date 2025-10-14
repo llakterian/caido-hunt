@@ -1,0 +1,14 @@
+{
+  "scan_info": {
+    "scan_id": "SCAN_558265",
+    "target": "http://auth.ripio.com",
+    "start_time": "2025-10-15T00:41:19.065028",
+    "duration": "6.49 seconds",
+    "total_vulnerabilities": 0,
+    "endpoints_scanned": 0,
+    "forms_discovered": 0
+  },
+  "severity_summary": {},
+  "vulnerability_types": {},
+  "vulnerabilities": []
+}
